@@ -20,7 +20,8 @@
                   "type": "date",
                   "doc_values": true
               }
-          }
+          },
+          "index": "not_analyzed"
       }
   }
 }

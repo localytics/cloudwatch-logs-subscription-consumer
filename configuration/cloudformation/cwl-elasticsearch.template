@@ -14,8 +14,8 @@
       "Description" : "EC2 instance type for the Elasticsearch nodes",
       "Type" : "String",
       "Default" : "t2.medium",
-      "AllowedValues" : [ 
-        "t2.micro", 
+      "AllowedValues" : [
+        "t2.micro",
         "t2.small",
         "t2.medium",
         "t2.large",
@@ -24,36 +24,36 @@
         "m4.2xlarge",
         "m4.4xlarge",
         "m4.10clarge",
-        "m3.medium", 
-        "m3.large", 
-        "m3.xlarge", 
-        "m3.2xlarge", 
-        "c3.large", 
-        "c3.xlarge", 
-        "c3.2xlarge", 
-        "c3.4xlarge", 
-        "c3.8xlarge", 
-        "c4.large", 
-        "c4.xlarge", 
-        "c4.2xlarge", 
-        "c4.4xlarge", 
-        "c4.8xlarge", 
-        "r3.large", 
-        "r3.xlarge", 
-        "r3.2xlarge", 
-        "r3.4xlarge", 
-        "r3.8xlarge", 
-        "i2.xlarge", 
-        "i2.2xlarge", 
-        "i2.4xlarge", 
-        "i2.8xlarge", 
-        "d2.xlarge", 
-        "d2.2xlarge", 
-        "d2.4xlarge", 
-        "d2.8xlarge", 
-        "hi1.4xlarge", 
-        "hs1.8xlarge", 
-        "cr1.8xlarge", 
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "i2.8xlarge",
+        "d2.xlarge",
+        "d2.2xlarge",
+        "d2.4xlarge",
+        "d2.8xlarge",
+        "hi1.4xlarge",
+        "hs1.8xlarge",
+        "cr1.8xlarge",
         "cc2.8xlarge"
        ],
       "ConstraintDescription" : "Must be a valid EC2 instance type"
@@ -203,7 +203,7 @@
       "cn-north-1"       : {"PV64" : "ami-fa39abc3", "HVM64" : "ami-f239abcb", "HVMG2" : "NOT_SUPPORTED"}
     }
   },
-  
+
   "Conditions" : {
     "CreateCWLForStack" : {"Fn::Equals" : [{"Ref" : "MonitorStack"}, "true"]},
     "NoKeySpecified" : {"Fn::Equals" : [{"Ref" : "KeyName"}, ""]}
@@ -221,7 +221,7 @@
         "AttributeDefinitions" : [
           {
             "AttributeName" : "leaseKey",
-            "AttributeType" : "S"   
+            "AttributeType" : "S"
           }
         ],
         "KeySchema" : [
@@ -247,13 +247,13 @@
           "Version": "2012-10-17",
           "Statement": [{
             "Effect": "Allow",
-            "Principal": { 
+            "Principal": {
                 "Service": { "Fn::Join": ["", ["logs.", { "Ref": "AWS::Region" } ,".amazonaws.com" ]]}
             },
             "Action": "sts:AssumeRole"
           }]
         }
-      }  
+      }
     },
 
     "CloudWatchLogsKinesisPolicy": {
@@ -346,7 +346,7 @@
         "Roles": [ { "Ref": "ElasticsearchNodeRole" } ]
       }
     },
-    
+
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
@@ -479,16 +479,16 @@
         "GroupDescription" : "Enable Elasticsearch access",
         "SecurityGroupIngress" : [
           {
-            "IpProtocol" : "tcp", 
-            "FromPort" : "8080", 
+            "IpProtocol" : "tcp",
+            "FromPort" : "8080",
             "ToPort" : "8080",
             "SourceSecurityGroupOwnerId" : {"Fn::GetAtt" : ["ElasticsearchELB", "SourceSecurityGroup.OwnerAlias"]},
-            "SourceSecurityGroupId" : { "Ref" : "ElasticsearchELBSecurityGroup" } 
+            "SourceSecurityGroupId" : { "Ref" : "ElasticsearchELBSecurityGroup" }
           },
           {
-            "IpProtocol" : "tcp", 
-            "FromPort" : "22", 
-            "ToPort" : "22", 
+            "IpProtocol" : "tcp",
+            "FromPort" : "22",
+            "ToPort" : "22",
             "CidrIp" : { "Ref" : "AllowedIpSource" }
           }
         ]
@@ -499,12 +499,12 @@
       "Type" : "AWS::EC2::SecurityGroupIngress",
       "Properties" : {
         "GroupId" : { "Ref": "ElasticsearchSecurityGroup" },
-        "IpProtocol" : "tcp", 
-        "FromPort" : "9300", 
+        "IpProtocol" : "tcp",
+        "FromPort" : "9300",
         "ToPort" : "9399",
         "SourceSecurityGroupId" : { "Ref" : "ElasticsearchSecurityGroup" }
       }
-    }, 
+    },
 
     "ElasticsearchELBSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
@@ -513,8 +513,8 @@
         "GroupDescription" : "Enable restricted ELB access",
         "SecurityGroupIngress" : [
           {
-            "IpProtocol" : "tcp", 
-            "FromPort" : "80", 
+            "IpProtocol" : "tcp",
+            "FromPort" : "80",
             "ToPort" : "80",
             "CidrIp" : { "Ref" : "AllowedIpSource" }
           }
@@ -606,7 +606,7 @@
                 "command": { "Fn::Join" : ["", [
                   "cp -R ./", { "Fn::FindInMap" : [ "Constants", "S3DownloadFile", "Value" ]} ,"/configuration/elasticsearch/* /etc/elasticsearch/"
                 ]]}
-              }, 
+              },
               "02_updateESConfigForNode": {
                 "command": { "Fn::Join" : ["", [
                   "echo \"",
@@ -654,19 +654,19 @@
                       "--filter-name \"cwl-cfn-es-", { "Ref": "KinesisSubscriptionStream" }, "\" ",
                       "--filter-pattern \"${FILTERS[\"", { "Ref": "LogFormat" }, "\"]}\" ",
                       "--region \"", { "Ref" : "AWS::Region" }, "\" ",
-                      "--destination-arn \"", 
-                      "arn:aws:kinesis:", { "Ref": "AWS::Region" }, 
-                      ":", { "Ref": "AWS::AccountId" }, 
+                      "--destination-arn \"",
+                      "arn:aws:kinesis:", { "Ref": "AWS::Region" },
+                      ":", { "Ref": "AWS::AccountId" },
                       ":stream/", { "Ref": "KinesisSubscriptionStream"} ,"\" ",
-                      "--role-arn \"", 
-                      "arn:aws:iam::", { "Ref": "AWS::AccountId" }, 
+                      "--role-arn \"",
+                      "arn:aws:iam::", { "Ref": "AWS::AccountId" },
                       ":role/", { "Ref": "CloudWatchLogsKinesisRole" },"\""
                  ]]}
-              }, 
+              },
               "06_nginxAuthConfig": {
-                "command": { "Fn::Join" : ["", [ 
-                  "htpasswd -c -b /etc/nginx/.htpasswd ", 
-                  { "Ref": "NginxUsername" }, " ", 
+                "command": { "Fn::Join" : ["", [
+                  "htpasswd -c -b /etc/nginx/.htpasswd ",
+                  { "Ref": "NginxUsername" }, " ",
                   { "Ref": "NginxPassword" }, "\n"
                  ]]}
               },
@@ -748,7 +748,7 @@
                   "    compress\n",
                   "}\n"
                 ]]}
-              },                 
+              },
               "/etc/awslogs/awscli.conf": {
                    "content": { "Fn::Join" : ["", [
                   "[plugins]\n",
@@ -801,7 +801,7 @@
                    "content": "# Find original defaults in .bak file"
                  }
                 ]
-              } 
+              }
             },
 
             "services": {
@@ -822,7 +822,7 @@
                   "Fn::If": [
                     "CreateCWLForStack",
                     {
-                      "enabled" : "true", 
+                      "enabled" : "true",
                          "ensureRunning" : "true",
                         "files" : [ "/etc/awslogs/awslogs.conf" ]
                     },
@@ -882,6 +882,10 @@
 
           "# Add static Kibana 3 dashboards\n",
           "cp -f ", { "Fn::FindInMap" : [ "Constants", "S3DownloadFile", "Value" ]} ,"/configuration/kibana/* /usr/share/nginx/html/kibana3/app/dashboards/ || error_exit \"Failed to copy the Kibana 3 static dashboards\" \n",
+
+          "# Download Localytics-customized Elasticsearch index templates\n",
+          "wget https://s3.amazonaws.com/files.sandbox/joel/cwl_template.json || error_exit \"Failed to get Localytics Elasticsearch index template\" \n",
+          "cp cwl_template.json /etc/elasticsearch/templates/cwl_template.json || error_exit \"Failed to copy Localytics template\"\n",
 
           "# Update Elasticsearch index templates\n",
           "sed -i '5i\\ \\ \\ \\ \\ \\ \"index.number_of_replicas\" : ", { "Ref": "ElasticsearchReplicas" } ,",' /etc/elasticsearch/templates/cwl_template.json || error_exit \"Failed update cwl_template.json\"\n",

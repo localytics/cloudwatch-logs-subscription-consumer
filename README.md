@@ -6,15 +6,15 @@ The current version of the CloudWatch Logs Subscription Consumer comes with buil
 
 ## One-Click Setup: CloudWatch Logs + Elasticsearch + Kibana
 
-This project includes a sample [CloudFormation][aws-cloudformation] template that can quickly bring up an Elasticsearch cluster on [Amazon EC2][amazon-ec2] fed with real-time data from any CloudWatch Logs log group. The CloudFormation template will also install [Kibana 3][kibana3] and [Kibana 4.1][kibana4], and it comes bundled with a few sample Kibana 3 dashboards for the following sources of AWS log data: 
+This project includes a sample [CloudFormation][aws-cloudformation] template that can quickly bring up an Elasticsearch cluster on [Amazon EC2][amazon-ec2] fed with real-time data from any CloudWatch Logs log group. The CloudFormation template will also install [Kibana 3][kibana3] and [Kibana 4.1][kibana4], and it comes bundled with a few sample Kibana 3 dashboards for the following sources of AWS log data:
 
 + [Amazon VPC Flow Logs][sending-vpc-flow-logs]
 + [AWS Lambda][aws-lambda]
 + [AWS CloudTrail][sending-cloudtrail-logs]
- 
+
 You can also connect your Elasticsearch cluster to any other custom CloudWatch Logs log group and then use Kibana to interactively analyze your log data with ad-hoc visualizations and custom dashboards.
 
-If you already have an active CloudWatch Logs log group, you can launch a **CloudWatch Logs + Elasticsearch + Kibana** stack right now with this launch button: 
+If you already have an active CloudWatch Logs log group, you can launch a **CloudWatch Logs + Elasticsearch + Kibana** stack right now with this launch button:
 
 [![Launch your Elasticsearch stack fed by CloudWatch Logs data](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)][launch-stack]
 
@@ -44,7 +44,7 @@ The following are snapshots of the sample Kibana 3 dashboards that come built-in
 
 #### Setting up Kibana 4 for CloudWatch Logs
 
-The CloudFormation template sets up Kibana 3 with the correct Elasticsearch index patterns for this application, but Kibana 4 needs to be configured manually. When you visit the Kibana 4 URL for the first time you will be prompted to configure an index pattern where you have to: 
+The CloudFormation template sets up Kibana 3 with the correct Elasticsearch index patterns for this application, but Kibana 4 needs to be configured manually. When you visit the Kibana 4 URL for the first time you will be prompted to configure an index pattern where you have to:
 
 + Turn on "Index contains time-based events"
 + Turn on "Use event times to create index names"
@@ -82,7 +82,7 @@ Other log events that have a fixed-column format (such as traditional web server
 127.0.0.1 user-identifier frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif" 200 2326
 ```
 
-... then you can use the following subscription filter pattern: 
+... then you can use the following subscription filter pattern:
 
 ```
 [ip, user_identifier, user, timestamp, request, status_code, response_size]
@@ -111,14 +111,14 @@ Filter patterns can also be used to restrict what flows from CloudWatch Logs to 
 5. Conditions on multiple fields:
 
   `[ip != 10.0.0.1, user_identifier, user, timestamp, request, status_code = 200, response_size]`
-  
+
 6. Compound conditions:
 
   `[(ip != 10.* && ip != 192.*) || ip = 127.*, user_identifier, user, timestamp, request, status_code, response_size]`
 
 ##### Other Less-Structured Data
 
-The last field in a subscription filter pattern is always greedy, and in case the log event message has more fields than what is expressed in the filter, all additional data would get assigned to the last field. For example, the following filter pattern: 
+The last field in a subscription filter pattern is always greedy, and in case the log event message has more fields than what is expressed in the filter, all additional data would get assigned to the last field. For example, the following filter pattern:
 
 ```
 [timestamp, request_id, event]
@@ -140,7 +140,7 @@ The last field in a subscription filter pattern is always greedy, and in case th
 }
 ```
 
-If one of the fields were to contain a valid JSON string, it would get put as an [Object field][object-types] in Elasticsearch rather than as an escaped JSON string. For example, using the `[timestamp, request_id, event]` filter pattern against the following log event: 
+If one of the fields were to contain a valid JSON string, it would get put as an [Object field][object-types] in Elasticsearch rather than as an escaped JSON string. For example, using the `[timestamp, request_id, event]` filter pattern against the following log event:
 
 ```
 2015-07-08T01:42:25.679Z 8bd492bcaede { "payloadSize": 100, "responseCode": "HTTP 200 OK" }
@@ -153,8 +153,8 @@ If one of the fields were to contain a valid JSON string, it would get put as an
   "timestamp": "2015-07-08T01:42:25.679Z",
   "request_id": "8bd492bcaede",
   "event": {
-      "payloadSize": 100, 
-      "responseCode": "HTTP 200 OK" 
+      "payloadSize": 100,
+      "responseCode": "HTTP 200 OK"
     }
   }
 }
@@ -199,12 +199,12 @@ exports.handler = function(event, context) {
     });
 
     // collect statistics on the function's activity and performance
-    console.log(JSON.stringify({ 
+    console.log(JSON.stringify({
         "recordsProcessed": event.Records.length,
         "processTime": new Date().getTime() - start,
         "bytesRead": bytesRead,
     }, null, 2));
-    
+
     context.succeed("Successfully processed " + event.Records.length + " records.");
 };
 ```
@@ -227,7 +227,7 @@ The current version of the CloudFormation template allows you to configure two b
 + IP Address restrictions configured with [EC2 security groups][ec2-security-groups].
 + [HTTP Basic Auth][http-basic-auth] configured through an [nginx][nginx] proxy that sits in front of the Elasticsearch endpoint.
 
-This is generally considered an insufficient level of access control for clusters holding confidential data. It is highly recommended that you put additional security measures and access control mechanisms before you use this stack with production data. 
+This is generally considered an insufficient level of access control for clusters holding confidential data. It is highly recommended that you put additional security measures and access control mechanisms before you use this stack with production data.
 
 The nginx setup can be easily modified to enable other security and access control features, such as:
 + Adding HTTPS support to authenticate the endpoint and protect the Basic Auth credentials.
@@ -237,14 +237,14 @@ You can find the nginx configuration used by the CloudFormation template in: [co
 
 ## Building from source
 
-Once you check out the code from GitHub, you can build it using Maven. To disable the GPG-signing in the build, use: 
+Once you check out the code from GitHub, you can build it using Maven. To disable the GPG-signing in the build, use:
 ```
 mvn clean install -Dgpg.skip=true
 ```
 
 ## Running locally
 
-After building from source you can run the applicaiton locally using any of these three Maven profiles: `Stdout`, `Elasticsearch` or `S3`. For example: 
+After building from source you can run the applicaiton locally using any of these three Maven profiles: `Stdout`, `Elasticsearch` or `S3`. For example:
 ```
 mvn exec:java -P Elasticsearch
 ```
@@ -285,7 +285,7 @@ mvn exec:java -P Stdout -DkinesisInputStream=application-log-stream -DregionName
 [aws-lambda]: http://aws.amazon.com/lambda/
 [aws-cloudtrail]: http://aws.amazon.com/cloudtrail/
 [vpc-flow-documentation]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/flow-logs.html
-[launch-stack]: https://console.aws.amazon.com/cloudformation/home?#/stacks/new?stackName=CWL-Elasticsearch&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-cloudwatch%2Fdownloads%2Fcloudwatch-logs-subscription-consumer%2Fcwl-elasticsearch.template
+[launch-stack]: https://console.aws.amazon.com/cloudformation/home?#/stacks/new?stackName=CWL-Elasticsearch&templateURL=https:%2F%2Fs3.amazonaws.com%2Ffiles.sandbox%2Fjoel%2Fcwl-elasticsearch.template
 [dashboard-vpc]: https://s3.amazonaws.com/aws-cloudwatch/downloads/cloudwatch-logs-subscription-consumer/Full-VPCFlowLogs-Dashboard.png
 [dashboard-lambda]: https://s3.amazonaws.com/aws-cloudwatch/downloads/cloudwatch-logs-subscription-consumer/Full-Lambda-Dashboard.png
 [dashboard-cloudtrail]: https://s3.amazonaws.com/aws-cloudwatch/downloads/cloudwatch-logs-subscription-consumer/Full-CloudTrail-Dashboard.png
